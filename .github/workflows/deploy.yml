@@ -1,111 +1,148 @@
-# ============================================================
-#  STREAMIFY — GitHub Actions Deployment Workflow
-#  Deploys the static website to GitHub Pages automatically
-#  on every push to the main branch.
-# ============================================================
+# ================================================================
+#  STREAMIFY — GitHub Actions
+#  1) يشغّل السكريبت ويسحب المسلسلات تلقائياً كل يوم
+#  2) يحدّث content.js ويرفعه على الـ Repository
+#  3) يبني الموقع ويرفعه على GitHub Pages
+# ================================================================
 
-name: 🚀 Deploy Streamify to GitHub Pages
+name: 🎬 Scrape & Deploy Streamify
 
-# ─── Trigger: Run on every push to main ────────────────────
 on:
+  # ── تلقائي كل يوم الساعة 6 صباحاً بتوقيت القاهرة (4:00 UTC) ──
+  schedule:
+    - cron: "0 4 * * *"
+
+  # ── عند أي push على main ────────────────────────────────────
   push:
     branches:
-      - main          # Change to "master" if your default branch is master
+      - main
 
-  # Allow manual trigger from GitHub Actions tab
+  # ── تشغيل يدوي من تبويب Actions ────────────────────────────
   workflow_dispatch:
 
-# ─── Permissions ────────────────────────────────────────────
 permissions:
-  contents: read
-  pages:    write
+  contents: write
+  pages: write
   id-token: write
 
-# ─── Prevent concurrent deployments ─────────────────────────
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
-# ═══════════════════════════════════════════════════════════
-#  JOBS
-# ═══════════════════════════════════════════════════════════
 jobs:
 
-  # ──────────────────────────────────────────────────────────
-  #  JOB 1: Build (validate structure, no build step needed
-  #          for pure static sites — just verify files exist)
-  # ──────────────────────────────────────────────────────────
-  build:
-    name: 🔨 Validate & Prepare Site
+  # ════════════════════════════════════════════════════════════
+  #  JOB 1: SCRAPE — يسحب المحتوى ويحدّث content.js
+  # ════════════════════════════════════════════════════════════
+  scrape:
+    name: 🔍 Scrape Larozza Content
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the repository
+
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      # 2. Verify required files exist
-      - name: ✅ Verify site structure
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: 📦 Install Python dependencies
+        run: pip install requests beautifulsoup4 lxml
+
+      - name: 🚀 Run scraper
         run: |
-          echo "── Checking required files ──────────────────"
+          echo "════════════════════════════════════════"
+          echo "  🎬  تشغيل سكريبت السحب..."
+          echo "════════════════════════════════════════"
+          python scripts/scraper.py
+        continue-on-error: true
 
-          # Check for critical files
+      - name: 📊 Show scrape result
+        run: |
+          if [ -f "js/content.js" ]; then
+            echo "✅  content.js موجود"
+            echo "📏  الحجم: $(wc -c < js/content.js) بايت"
+          else
+            echo "⚠️  content.js غير موجود — سيُستخدم الملف السابق"
+          fi
+
+      - name: 💾 Commit updated content.js
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add js/content.js
+          if git diff --cached --quiet; then
+            echo "ℹ️  لا يوجد تغيير جديد في content.js"
+          else
+            git commit -m "🤖 تحديث تلقائي للمحتوى — $(date '+%Y-%m-%d %H:%M UTC')"
+            git push
+            echo "✅  تم رفع content.js المحدّث"
+          fi
+
+  # ════════════════════════════════════════════════════════════
+  #  JOB 2: BUILD — التحقق من الملفات وتجهيز الموقع
+  # ════════════════════════════════════════════════════════════
+  build:
+    name: 🔨 Build Site
+    runs-on: ubuntu-latest
+    needs: scrape
+
+    steps:
+
+      - name: 📥 Checkout repository (latest)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: ✅ Verify required files
+        run: |
+          echo "── فحص الملفات ─────────────────────────────"
           for file in \
-            "index.html" \
-            "browse.html" \
-            "player.html" \
-            "css/style.css" \
-            "js/app.js" \
-            "js/content.js"; do
+            "index.html" "browse.html" "player.html" \
+            "css/style.css" "js/app.js" "js/content.js"; do
             if [ -f "$file" ]; then
               echo "  ✅  $file"
             else
-              echo "  ❌  MISSING: $file"
+              echo "  ❌  مفقود: $file"
               exit 1
             fi
           done
+          echo "✅  كل الملفات موجودة — $(du -sh . --exclude=.git | cut -f1)"
 
-          echo ""
-          echo "── All required files found! ─────────────────"
-          echo "── Site size: $(du -sh . --exclude=.git | cut -f1)"
-
-      # 3. Setup GitHub Pages
       - name: ⚙️ Setup GitHub Pages
         uses: actions/configure-pages@v5
 
-      # 4. Upload the entire repository as a Pages artifact
-      #    (excludes .github folder and .git for security)
       - name: 📦 Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repo root (all HTML, CSS, JS files)
-          path: '.'
+          path: "."
 
-  # ──────────────────────────────────────────────────────────
-  #  JOB 2: Deploy to GitHub Pages
-  # ──────────────────────────────────────────────────────────
+  # ════════════════════════════════════════════════════════════
+  #  JOB 3: DEPLOY — رفع الموقع على GitHub Pages
+  # ════════════════════════════════════════════════════════════
   deploy:
     name: 🌐 Deploy to GitHub Pages
     runs-on: ubuntu-latest
-
-    # Only runs after build job succeeds
     needs: build
 
-    # Set deployment environment
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      # Deploy the uploaded artifact to GitHub Pages
+
       - name: 🚀 Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
 
-      # Print the deployment URL in the workflow log
-      - name: 🔗 Print deployment URL
+      - name: 🔗 Print site URL
         run: |
-          echo "════════════════════════════════════════════"
-          echo "  ✅  Streamify deployed successfully!"
-          echo "  🌐  URL: ${{ steps.deployment.outputs.page_url }}"
-          echo "════════════════════════════════════════════"
+          echo "════════════════════════════════════════════════"
+          echo "  🎉  Streamify يعمل على:"
+          echo "  🌐  ${{ steps.deployment.outputs.page_url }}"
+          echo "════════════════════════════════════════════════"
