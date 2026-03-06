@@ -1,23 +1,11 @@
-# ================================================================
-#  STREAMIFY — GitHub Actions
-#  1) يشغّل السكريبت ويسحب المسلسلات تلقائياً كل يوم
-#  2) يحدّث content.js ويرفعه على الـ Repository
-#  3) يبني الموقع ويرفعه على GitHub Pages
-# ================================================================
-
 name: 🎬 Scrape & Deploy Streamify
 
 on:
-  # ── تلقائي كل يوم الساعة 6 صباحاً بتوقيت القاهرة (4:00 UTC) ──
   schedule:
     - cron: "0 4 * * *"
-
-  # ── عند أي push على main ────────────────────────────────────
   push:
     branches:
       - main
-
-  # ── تشغيل يدوي من تبويب Actions ────────────────────────────
   workflow_dispatch:
 
 permissions:
@@ -31,9 +19,6 @@ concurrency:
 
 jobs:
 
-  # ════════════════════════════════════════════════════════════
-  #  JOB 1: SCRAPE — يسحب المحتوى ويحدّث content.js
-  # ════════════════════════════════════════════════════════════
   scrape:
     name: 🔍 Scrape Larozza Content
     runs-on: ubuntu-latest
@@ -49,27 +34,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: "pip"
 
-      - name: 📦 Install Python dependencies
+      - name: 📦 Install dependencies
         run: pip install requests beautifulsoup4 lxml
 
       - name: 🚀 Run scraper
-        run: |
-          echo "════════════════════════════════════════"
-          echo "  🎬  تشغيل سكريبت السحب..."
-          echo "════════════════════════════════════════"
-          python scripts/scraper.py
+        run: python scripts/scraper.py
         continue-on-error: true
-
-      - name: 📊 Show scrape result
-        run: |
-          if [ -f "js/content.js" ]; then
-            echo "✅  content.js موجود"
-            echo "📏  الحجم: $(wc -c < js/content.js) بايت"
-          else
-            echo "⚠️  content.js غير موجود — سيُستخدم الملف السابق"
-          fi
 
       - name: 💾 Commit updated content.js
         run: |
@@ -77,16 +48,12 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add js/content.js
           if git diff --cached --quiet; then
-            echo "ℹ️  لا يوجد تغيير جديد في content.js"
+            echo "ℹ️  لا يوجد تغيير"
           else
-            git commit -m "🤖 تحديث تلقائي للمحتوى — $(date '+%Y-%m-%d %H:%M UTC')"
+            git commit -m "🤖 تحديث تلقائي — $(date '+%Y-%m-%d %H:%M UTC')"
             git push
-            echo "✅  تم رفع content.js المحدّث"
           fi
 
-  # ════════════════════════════════════════════════════════════
-  #  JOB 2: BUILD — التحقق من الملفات وتجهيز الموقع
-  # ════════════════════════════════════════════════════════════
   build:
     name: 🔨 Build Site
     runs-on: ubuntu-latest
@@ -94,17 +61,14 @@ jobs:
 
     steps:
 
-      - name: 📥 Checkout repository (latest)
+      - name: 📥 Checkout repository
         uses: actions/checkout@v4
         with:
           ref: main
 
       - name: ✅ Verify required files
         run: |
-          echo "── فحص الملفات ─────────────────────────────"
-          for file in \
-            "index.html" "browse.html" "player.html" \
-            "css/style.css" "js/app.js" "js/content.js"; do
+          for file in "index.html" "browse.html" "player.html" "css/style.css" "js/app.js" "js/content.js"; do
             if [ -f "$file" ]; then
               echo "  ✅  $file"
             else
@@ -112,7 +76,6 @@ jobs:
               exit 1
             fi
           done
-          echo "✅  كل الملفات موجودة — $(du -sh . --exclude=.git | cut -f1)"
 
       - name: ⚙️ Setup GitHub Pages
         uses: actions/configure-pages@v5
@@ -122,9 +85,6 @@ jobs:
         with:
           path: "."
 
-  # ════════════════════════════════════════════════════════════
-  #  JOB 3: DEPLOY — رفع الموقع على GitHub Pages
-  # ════════════════════════════════════════════════════════════
   deploy:
     name: 🌐 Deploy to GitHub Pages
     runs-on: ubuntu-latest
@@ -139,10 +99,3 @@ jobs:
       - name: 🚀 Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: 🔗 Print site URL
-        run: |
-          echo "════════════════════════════════════════════════"
-          echo "  🎉  Streamify يعمل على:"
-          echo "  🌐  ${{ steps.deployment.outputs.page_url }}"
-          echo "════════════════════════════════════════════════"
