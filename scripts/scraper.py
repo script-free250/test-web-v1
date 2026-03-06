@@ -222,7 +222,7 @@ async def get_series_details(page, info):
     sep("بحث عن روابط الحلقات")
 
     ep_selectors = [
-        ('a[href*="play.php"]',    'play.php'),
+        ('a[href*="video.php"]',    'video.php'),
         ('a[href*="watch"]',        'watch'),
         ('a[href*="episode"]',      'episode'),
         ('a[href*="حلقة"]',        'حلقة'),
@@ -263,7 +263,7 @@ async def get_series_details(page, info):
 
     # ── سحب كل حلقة ────────────────────────────────────────
     episodes = []
-    for i, ep in enumerate(ep_links[:60]):
+    for i, ep in enumerate(ep_links[:1]):  # ← حلقة واحدة للتجربة
         ep_num = int(re.search(r'\d+', ep['text'] or str(i+1)).group()) if re.search(r'\d+', ep['text']) else i+1
         log("📺", f"حلقة {ep_num}: {ep['url']}")
 
@@ -456,11 +456,10 @@ async def main():
 
             sep(f"✅  STEP 1 نجح — {len(series_list)} مسلسل")
 
-            # STEP 2 — أول 3 مسلسلات فقط للتجربة
-            # بعد ما يشتغل صح، غيّر [: 3] إلى [:]
+            # STEP 2 — مسلسل واحد للتجربة
             all_series = []
-            for idx, s in enumerate(series_list[:3]):
-                log("🎬", f"[{idx+1}/{min(3,len(series_list))}] {s['title'][:50]}")
+            for idx, s in enumerate(series_list[:1]):
+                log("🎬", f"[{idx+1}/1] {s['title'][:50]}")
                 details = await get_series_details(page, s)
                 if details:
                     all_series.append(details)
