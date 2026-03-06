@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تصفح المحتوى — Streamify</title>
+  <meta name="description" content="تصفح جميع الأفلام والمسلسلات المتاحة على Streamify">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Extra styles for Browse page */
+    .browse-page-wrapper {
+      min-height: 100vh;
+      background: var(--bg-primary);
+    }
+
+    .browse-bg {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 300px;
+      background: linear-gradient(to bottom,
+        rgba(201,168,76,0.06) 0%,
+        transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .genre-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      margin: 0.5rem 0;
+    }
+
+    .filter-label {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0 0.5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .results-count {
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      padding: 0 5%;
+      max-width: 1400px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .results-count span {
+      color: var(--accent);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body data-page="browse">
+
+  <!-- Loader -->
+  <div class="loader-screen" id="loader">
+    <div class="loader-logo">STREAMIFY</div>
+    <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+  </div>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <button class="search-overlay-close">✕</button>
+    <div class="search-input-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="ابحث عن فيلم أو مسلسل...">
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <!-- Background Gradient -->
+  <div class="browse-bg"></div>
+
+  <!-- Navigation -->
+  <nav class="navbar scrolled">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">🎬</div>
+        <span class="logo-text">STREAMIFY</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">الرئيسية</a></li>
+        <li><a href="browse.html?filter=movies">أفلام</a></li>
+        <li><a href="browse.html?filter=series">مسلسلات</a></li>
+        <li><a href="browse.html" class="active">تصفح الكل</a></li>
+      </ul>
+      <div class="nav-right">
+        <button class="search-btn">🔍</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">تصفح المحتوى</h1>
+    <p class="page-subtitle">اكتشف أفضل الأفلام والمسلسلات</p>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+
+    <!-- Type filters -->
+    <span class="filter-label">النوع:</span>
+    <button class="filter-btn active" data-filter="all">الكل</button>
+    <button class="filter-btn" data-filter="movies">🎥 أفلام</button>
+    <button class="filter-btn" data-filter="series">📺 مسلسلات</button>
+
+    <div class="genre-divider" style="width:1px;height:28px;margin:0 0.5rem;"></div>
+
+    <!-- Genre filters -->
+    <span class="filter-label">التصنيف:</span>
+    <button class="filter-btn active" data-genre="all">الكل</button>
+    <button class="filter-btn" data-genre="Action">أكشن</button>
+    <button class="filter-btn" data-genre="Drama">دراما</button>
+    <button class="filter-btn" data-genre="Sci-Fi">خيال علمي</button>
+    <button class="filter-btn" data-genre="Thriller">إثارة</button>
+    <button class="filter-btn" data-genre="Fantasy">فانتازيا</button>
+    <button class="filter-btn" data-genre="Crime">جريمة</button>
+
+  </div>
+
+  <!-- Results Count -->
+  <div class="results-count" id="resultsCount"></div>
+
+  <!-- Browse Grid -->
+  <div class="browse-grid" id="browseGrid"></div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">STREAMIFY</div>
+      <p class="footer-text">موقع لمشاهدة الأفلام والمسلسلات</p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/content.js"></script>
+  <script>
+    // Override initBrowsePage to add results count update
+    document.addEventListener('DOMContentLoaded', () => {
+      // Read URL filter param
+      const params = new URLSearchParams(location.search);
+      const urlFilter = params.get('filter');
+      if (urlFilter) {
+        const targetBtn = document.querySelector(`.filter-btn[data-filter="${urlFilter}"]`);
+        if (targetBtn) {
+          document.querySelectorAll('.filter-btn[data-filter]').forEach(b => b.classList.remove('active'));
+          targetBtn.classList.add('active');
+        }
+      }
+    });
+  </script>
+  <script src="js/app.js"></script>
+  <script>
+    // Update results count after render
+    const origRender = window.initBrowsePage;
+    document.addEventListener('DOMContentLoaded', () => {
+      const obs = new MutationObserver(() => {
+        const grid = document.getElementById('browseGrid');
+        const count = document.getElementById('resultsCount');
+        if (grid && count) {
+          const cards = grid.querySelectorAll('.content-card').length;
+          count.innerHTML = cards > 0
+            ? `عرض <span>${cards}</span> عنصر`
+            : '';
+        }
+      });
+      const grid = document.getElementById('browseGrid');
+      if (grid) obs.observe(grid, { childList: true });
+    });
+  </script>
+</body>
+</html>

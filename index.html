@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Streamify — شاهد أفضل الأفلام والمسلسلات</title>
+  <meta name="description" content="Streamify - موقع لمشاهدة أفضل الأفلام والمسلسلات بجودة عالية">
+
+  <!-- Favicon (cinema icon via emoji) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="home">
+
+  <!-- ═══════════════════════════════════════════
+       LOADER SCREEN
+       ═══════════════════════════════════════ -->
+  <div class="loader-screen" id="loader">
+    <div class="loader-logo">STREAMIFY</div>
+    <div class="loader-bar">
+      <div class="loader-bar-fill"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SEARCH OVERLAY
+       ═══════════════════════════════════════ -->
+  <div class="search-overlay" id="searchOverlay">
+    <button class="search-overlay-close">✕</button>
+    <div class="search-input-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="ابحث عن فيلم أو مسلسل...">
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       NAVIGATION
+       ═══════════════════════════════════════ -->
+  <nav class="navbar transparent">
+    <div class="nav-inner">
+
+      <!-- Logo -->
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">🎬</div>
+        <span class="logo-text">STREAMIFY</span>
+      </a>
+
+      <!-- Navigation Links -->
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">الرئيسية</a></li>
+        <li><a href="browse.html?filter=movies">أفلام</a></li>
+        <li><a href="browse.html?filter=series">مسلسلات</a></li>
+        <li><a href="browse.html">تصفح الكل</a></li>
+      </ul>
+
+      <!-- Right Side -->
+      <div class="nav-right">
+        <button class="search-btn" title="بحث">🔍</button>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       HERO SECTION
+       ═══════════════════════════════════════ -->
+  <section class="hero">
+    <!-- Background Image (set by JS) -->
+    <div class="hero-bg"></div>
+    <!-- Gradient Overlay -->
+    <div class="hero-overlay"></div>
+
+    <!-- Hero Content -->
+    <div class="hero-content">
+      <div class="hero-badge">
+        ✦ مميز الأسبوع
+      </div>
+
+      <h1 class="hero-title">Loading...</h1>
+
+      <div class="hero-meta">
+        <span class="rating">⭐ <span class="hero-rating">—</span></span>
+        <span class="year hero-year">—</span>
+        <span class="duration hero-duration">—</span>
+        <div class="genres hero-genres"></div>
+      </div>
+
+      <p class="hero-desc"></p>
+
+      <div class="hero-actions">
+        <button class="btn btn-primary hero-play-btn">
+          ▶ &nbsp; شاهد الآن
+        </button>
+        <button class="btn btn-secondary hero-info-btn">
+          ℹ &nbsp; مزيد من التفاصيل
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       CONTENT SECTIONS
+       ═══════════════════════════════════════ -->
+  <main class="content-sections">
+
+    <!-- Trending Now -->
+    <section class="section" id="sectionTrending">
+      <div class="section-header">
+        <h2 class="section-title">
+          <div class="title-icon">🔥</div>
+          رائج الآن
+        </h2>
+        <a href="browse.html" class="see-all">عرض الكل ←</a>
+      </div>
+      <div class="cards-row" id="trendingRow"></div>
+    </section>
+
+    <!-- Movies -->
+    <section class="section" id="sectionMovies">
+      <div class="section-header">
+        <h2 class="section-title">
+          <div class="title-icon">🎥</div>
+          أحدث الأفلام
+        </h2>
+        <a href="browse.html?filter=movies" class="see-all">كل الأفلام ←</a>
+      </div>
+      <div class="cards-row" id="moviesRow"></div>
+    </section>
+
+    <!-- Series -->
+    <section class="section" id="sectionSeries">
+      <div class="section-header">
+        <h2 class="section-title">
+          <div class="title-icon">📺</div>
+          مسلسلات مميزة
+        </h2>
+        <a href="browse.html?filter=series" class="see-all">كل المسلسلات ←</a>
+      </div>
+      <div class="cards-row series-row" id="seriesRow"></div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════ -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">STREAMIFY</div>
+      <p class="footer-text">
+        موقع لمشاهدة الأفلام والمسلسلات &nbsp;|&nbsp;
+        جميع المحتويات لأغراض تعليمية
+      </p>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Scripts -->
+  <script src="js/content.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
