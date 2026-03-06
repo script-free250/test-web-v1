@@ -7,201 +7,47 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* Extra player page styles */
-    .player-layout {
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 2.5rem;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem 5% 4rem;
-      align-items: start;
-    }
-
-    @media (max-width: 1024px) {
-      .player-layout { grid-template-columns: 1fr; }
-    }
-
-    /* Left: Video + Info */
-    .player-main {}
-
-    /* Right: Episodes / Related */
-    .player-sidebar {}
-
-    /* Info Section below video */
-    .content-info-box {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 2rem;
-      margin-top: 1.5rem;
-    }
-
-    .info-row {
-      display: flex;
-      gap: 1.5rem;
-      align-items: flex-start;
-      margin-bottom: 1.5rem;
-    }
-
-    .info-poster {
-      width: 120px;
-      flex-shrink: 0;
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: var(--shadow-card);
-    }
-
-    .info-poster img {
-      width: 100%;
-      object-fit: cover;
-    }
-
+    .player-layout { display: grid; grid-template-columns: 1fr 340px; gap: 2.5rem; max-width: 1400px; margin: 0 auto; padding: 2rem 5% 4rem; align-items: start; }
+    @media (max-width: 1024px) { .player-layout { grid-template-columns: 1fr; } }
+    .content-info-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; margin-top: 1.5rem; }
+    .info-row { display: flex; gap: 1.5rem; align-items: flex-start; margin-bottom: 1.5rem; }
+    .info-poster { width: 120px; flex-shrink: 0; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-card); }
+    .info-poster img { width: 100%; object-fit: cover; }
     .info-text { flex: 1; }
+    .stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .stat-item { text-align: center; }
+    .stat-value { font-family: var(--font-display); font-size: 1.4rem; color: var(--accent); display: block; margin-bottom: .25rem; }
+    .stat-label { font-family: var(--font-ui); font-size: .75rem; letter-spacing: .08em; color: var(--text-muted); text-transform: uppercase; }
 
-    .stat-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-top: 1.5rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border);
-    }
+    /* Servers Bar */
+    .servers-bar { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: .75rem; padding: .75rem 1rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); }
+    .servers-label { font-family: var(--font-ui); font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-left: .5rem; }
+    .server-btn { padding: .4rem 1rem; border-radius: 20px; font-family: var(--font-ui); font-size: .85rem; font-weight: 600; border: 1px solid var(--border); color: var(--text-secondary); background: transparent; cursor: pointer; transition: var(--transition); white-space: nowrap; }
+    .server-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .server-btn.active { background: linear-gradient(135deg,var(--accent),var(--accent-light)); border-color: transparent; color: #0a0806; }
 
-    .stat-item {
-      text-align: center;
-    }
-
-    .stat-value {
-      font-family: var(--font-display);
-      font-size: 1.4rem;
-      color: var(--accent);
-      display: block;
-      margin-bottom: 0.25rem;
-    }
-
-    .stat-label {
-      font-family: var(--font-ui);
-      font-size: 0.75rem;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      text-transform: uppercase;
-    }
-
-    /* Sidebar panel */
-    .sidebar-panel {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      position: sticky;
-      top: calc(var(--nav-height) + 1.5rem);
-    }
-
-    .sidebar-panel-header {
-      padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid var(--border);
-      font-family: var(--font-display);
-      font-size: 0.95rem;
-      letter-spacing: 0.08em;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .sidebar-panel-header .icon {
-      width: 28px; height: 28px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-light));
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-    }
-
-    /* Related mini-cards in sidebar */
-    .related-mini {
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      max-height: 500px;
-      overflow-y: auto;
-    }
-
-    .mini-card {
-      display: flex;
-      gap: 0.75rem;
-      align-items: center;
-      padding: 0.6rem;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: var(--transition);
-      border: 1px solid transparent;
-    }
-
-    .mini-card:hover {
-      background: var(--bg-card-hover);
-      border-color: var(--border);
-    }
-
-    .mini-card img {
-      width: 60px; height: 85px;
-      object-fit: cover;
-      border-radius: 6px;
-      flex-shrink: 0;
-      background: var(--bg-secondary);
-    }
-
+    /* Sidebar */
+    .sidebar-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; position: sticky; top: calc(var(--nav-height) + 1.5rem); }
+    .sidebar-panel-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); font-family: var(--font-display); font-size: .95rem; letter-spacing: .08em; display: flex; align-items: center; gap: .75rem; }
+    .sidebar-panel-header .icon { width: 28px; height: 28px; background: linear-gradient(135deg,var(--accent),var(--accent-light)); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: .85rem; }
+    .related-mini { padding: 1rem; display: flex; flex-direction: column; gap: .75rem; max-height: 500px; overflow-y: auto; }
+    .mini-card { display: flex; gap: .75rem; align-items: center; padding: .6rem; border-radius: var(--radius); cursor: pointer; transition: var(--transition); border: 1px solid transparent; }
+    .mini-card:hover { background: var(--bg-card-hover); border-color: var(--border); }
+    .mini-card img { width: 60px; height: 85px; object-fit: cover; border-radius: 6px; flex-shrink: 0; background: var(--bg-secondary); }
     .mini-card-info { flex: 1; min-width: 0; }
-
-    .mini-card-title {
-      font-family: var(--font-ui);
-      font-size: 0.88rem;
-      font-weight: 600;
-      margin-bottom: 0.35rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .mini-card-sub {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-family: var(--font-ui);
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .mini-card-play {
-      width: 32px; height: 32px;
-      background: rgba(201,168,76,0.15);
-      border: 1px solid var(--accent);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--accent);
-      font-size: 0.75rem;
-      flex-shrink: 0;
-      transition: var(--transition);
-    }
-
-    .mini-card:hover .mini-card-play {
-      background: var(--accent);
-      color: #0a0806;
-    }
+    .mini-card-title { font-family: var(--font-ui); font-size: .88rem; font-weight: 600; margin-bottom: .35rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mini-card-sub { font-size: .75rem; color: var(--text-muted); font-family: var(--font-ui); display: flex; gap: .5rem; }
+    .mini-card-play { width: 32px; height: 32px; background: rgba(201,168,76,.15); border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: .75rem; flex-shrink: 0; transition: var(--transition); }
+    .mini-card:hover .mini-card-play { background: var(--accent); color: #0a0806; }
   </style>
 </head>
 <body data-page="player">
 
-  <!-- Loader -->
   <div class="loader-screen" id="loader">
     <div class="loader-logo">STREAMIFY</div>
     <div class="loader-bar"><div class="loader-bar-fill"></div></div>
   </div>
 
-  <!-- Search Overlay -->
   <div class="search-overlay" id="searchOverlay">
     <button class="search-overlay-close">✕</button>
     <div class="search-input-wrap">
@@ -211,7 +57,6 @@
     <div class="search-results" id="searchResults"></div>
   </div>
 
-  <!-- Navigation -->
   <nav class="navbar scrolled">
     <div class="nav-inner">
       <a href="index.html" class="nav-logo">
@@ -224,185 +69,217 @@
         <li><a href="browse.html?filter=series">مسلسلات</a></li>
         <li><a href="browse.html">تصفح الكل</a></li>
       </ul>
-      <div class="nav-right">
-        <button class="search-btn">🔍</button>
-      </div>
+      <div class="nav-right"><button class="search-btn">🔍</button></div>
     </div>
   </nav>
 
-  <!-- ═══════════════════════════════════════════
-       PLAYER HERO (Backdrop)
-       ═══════════════════════════════════════ -->
   <div class="player-hero">
     <div class="player-backdrop" id="playerBackdrop"></div>
     <div style="position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:calc(var(--nav-height) + 1.5rem) 5% 0;">
-      <!-- Back Button -->
-      <button class="back-btn" onclick="history.back()">
-        ← العودة
-      </button>
+      <button class="back-btn" onclick="history.back()">← العودة</button>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════
-       MAIN PLAYER LAYOUT
-       ═══════════════════════════════════════ -->
   <div class="player-layout">
-
-    <!-- LEFT: Video + Content Info -->
     <div class="player-main">
 
-      <!-- Video Player -->
-      <div class="video-wrapper" id="videoWrap">
-        <!-- Video injected by JS -->
-        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#5a5a7a;font-family:'Rajdhani',sans-serif;font-size:1.1rem;">
-          جاري التحميل...
-        </div>
+      <!-- Servers Bar -->
+      <div class="servers-bar" id="serversBar" style="display:none;">
+        <span class="servers-label">🖥️ السرفر:</span>
       </div>
 
-      <!-- Content Info Card -->
+      <!-- Video -->
+      <div class="video-wrapper" id="videoWrap">
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#5a5a7a;font-family:'Rajdhani',sans-serif;font-size:1.1rem;">جاري التحميل...</div>
+      </div>
+
+      <!-- Info -->
       <div class="content-info-box">
         <div class="info-row">
-          <!-- Poster (hidden on small screens) -->
           <div class="info-poster" id="infoPoster">
             <img src="" alt="" id="posterImg" onerror="this.parentElement.style.display='none'">
           </div>
-
-          <!-- Text Info -->
           <div class="info-text">
             <h1 class="player-title" id="contentTitle">—</h1>
-
-            <div class="player-meta" id="playerMeta">
+            <div class="player-meta">
               <span id="contentRating" style="color:var(--accent);font-family:var(--font-ui);font-weight:600;">—</span>
               <span id="contentYear" style="color:var(--text-secondary);font-family:var(--font-ui);">—</span>
               <span id="contentDuration" style="color:var(--text-secondary);font-family:var(--font-ui);">—</span>
             </div>
-
-            <div id="contentGenres" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.25rem;"></div>
-
+            <div id="contentGenres" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem;"></div>
             <p class="player-desc" id="contentDesc">—</p>
-
             <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-              <button class="btn btn-primary" onclick="document.getElementById('videoWrap').scrollIntoView({behavior:'smooth'})">
-                ▶ &nbsp; شاهد الآن
-              </button>
-              <a href="browse.html" class="btn btn-secondary">
-                🔍 &nbsp; محتوى مشابه
-              </a>
+              <button class="btn btn-primary" onclick="document.getElementById('videoWrap').scrollIntoView({behavior:'smooth'})">▶ &nbsp; شاهد الآن</button>
+              <a href="browse.html" class="btn btn-secondary">🔍 &nbsp; محتوى مشابه</a>
             </div>
           </div>
         </div>
-
-        <!-- Stats Grid -->
         <div class="stat-grid">
-          <div class="stat-item">
-            <span class="stat-value" id="statRating">—</span>
-            <span class="stat-label">التقييم</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value" id="statYear">—</span>
-            <span class="stat-label">السنة</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value" id="statDuration">—</span>
-            <span class="stat-label">المدة</span>
-          </div>
+          <div class="stat-item"><span class="stat-value" id="statRating">—</span><span class="stat-label">التقييم</span></div>
+          <div class="stat-item"><span class="stat-value" id="statYear">—</span><span class="stat-label">السنة</span></div>
+          <div class="stat-item"><span class="stat-value" id="statDuration">—</span><span class="stat-label">المدة / مواسم</span></div>
         </div>
       </div>
-
     </div>
 
-    <!-- RIGHT: Sidebar (Episodes or Related) -->
     <div class="player-sidebar">
-
-      <!-- Episodes Panel (for series — shown/hidden by JS) -->
       <div class="sidebar-panel" id="episodesPanel">
-        <div class="sidebar-panel-header">
-          <div class="icon">📺</div>
-          الحلقات
-        </div>
+        <div class="sidebar-panel-header"><div class="icon">📺</div>الحلقات</div>
         <div class="season-selector" id="seasonSelector"></div>
         <div class="episodes-list" id="episodesList"></div>
       </div>
-
-      <!-- Related Content Panel -->
-      <div class="sidebar-panel" style="margin-top:1.5rem;" id="relatedPanel">
-        <div class="sidebar-panel-header">
-          <div class="icon">🎬</div>
-          محتوى مشابه
-        </div>
+      <div class="sidebar-panel" style="margin-top:1.5rem;">
+        <div class="sidebar-panel-header"><div class="icon">🎬</div>محتوى مشابه</div>
         <div class="related-mini" id="relatedGrid"></div>
       </div>
-
     </div>
-
   </div>
 
-  <!-- Footer -->
   <footer>
     <div class="footer-inner">
       <div class="footer-logo">STREAMIFY</div>
       <p class="footer-text">موقع لمشاهدة الأفلام والمسلسلات</p>
     </div>
   </footer>
-
   <div class="toast" id="toast"></div>
 
   <script src="js/content.js"></script>
   <script src="js/app.js"></script>
   <script>
-    // ─── Patch player page for sidebar related cards ──────────
-    // Override renderRelated to use mini-card style in sidebar
-    document.addEventListener('DOMContentLoaded', () => {
-      // Wait for initPlayerPage to run, then patch relatedGrid
-      setTimeout(() => {
-        const relatedGrid = document.getElementById('relatedGrid');
-        if (!relatedGrid) return;
+  // ══════════════════════════════════════════════════════════
+  //  Multi-server video injection
+  // ══════════════════════════════════════════════════════════
+  function injectVideo(url, videoWrap) {
+    if (!url) {
+      videoWrap.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9090b0;font-family:'Rajdhani',sans-serif;font-size:1.1rem;flex-direction:column;gap:1rem;"><span style="font-size:3rem">🎬</span>الفيديو غير متاح</div>`;
+      return;
+    }
+    if (url.match(/\.(mp4|mkv|webm|m3u8)(\?|$)/i)) {
+      videoWrap.innerHTML = `<video controls src="${url}" style="position:absolute;inset:0;width:100%;height:100%;"></video>`;
+    } else {
+      videoWrap.innerHTML = `<iframe src="${url}" allowfullscreen allow="autoplay; encrypted-media; fullscreen" referrerpolicy="no-referrer"></iframe>`;
+    }
+  }
 
-        const params  = new URLSearchParams(location.search);
-        const id      = params.get('id');
-        const type    = params.get('type') || 'movie';
+  function loadEpisodeWithServers(ep) {
+    const videoWrap = document.getElementById('videoWrap');
+    const serversBar = document.getElementById('serversBar');
+    const servers = ep.servers || [];
 
-        const ALL = [
-          ...STREAMIFY_DATA.movies.map(m => ({ ...m, type: 'movie' })),
-          ...STREAMIFY_DATA.series.map(s => ({ ...s, type: 'series' }))
-        ];
+    if (servers.length > 1 && serversBar) {
+      serversBar.style.display = 'flex';
+      // Clear old buttons (keep label)
+      serversBar.innerHTML = '<span class="servers-label">🖥️ السرفر:</span>';
+      servers.forEach((srv, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'server-btn' + (i === 0 ? ' active' : '');
+        btn.textContent = srv.label || `سرفر ${i + 1}`;
+        btn.addEventListener('click', () => {
+          serversBar.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          injectVideo(srv.url, videoWrap);
+        });
+        serversBar.appendChild(btn);
+      });
+      injectVideo(servers[0].url, videoWrap);
+    } else {
+      if (serversBar) serversBar.style.display = 'none';
+      injectVideo(ep.videoUrl || (servers[0] && servers[0].url) || '', videoWrap);
+    }
+  }
 
-        const related = ALL.filter(i => i.id !== id && i.type === type).slice(0, 8);
+  // ══════════════════════════════════════════════════════════
+  //  Override episode rendering to use multi-server support
+  // ══════════════════════════════════════════════════════════
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      const params = new URLSearchParams(location.search);
+      const id     = params.get('id');
+      const type   = params.get('type') || 'movie';
 
-        relatedGrid.innerHTML = related.map(item => `
-          <div class="mini-card" onclick="location.href='player.html?id=${item.id}&type=${item.type}'">
-            <img src="${item.poster}" alt="${item.titleAr || item.title}"
-                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'85\'%3E%3Crect fill=\'%2312121f\' width=\'60\' height=\'85\'/%3E%3C/svg%3E'">
-            <div class="mini-card-info">
-              <div class="mini-card-title">${item.titleAr || item.title}</div>
-              <div class="mini-card-sub">
-                <span>⭐ ${item.rating}</span>
-                <span>${item.year}</span>
+      const ALL = [
+        ...STREAMIFY_DATA.movies.map(m => ({ ...m, type: 'movie' })),
+        ...STREAMIFY_DATA.series.map(s => ({ ...s, type: 'series' }))
+      ];
+
+      const content = type === 'movie'
+        ? (STREAMIFY_DATA.movies.find(m => m.id === id) || (STREAMIFY_DATA.featured.id === id ? STREAMIFY_DATA.featured : null))
+        : STREAMIFY_DATA.series.find(s => s.id === id);
+
+      if (!content) return;
+
+      // Poster + stats
+      const pi = document.getElementById('posterImg');
+      if (pi) { pi.src = content.poster; pi.alt = content.title; }
+      const sr = document.getElementById('statRating'), sy = document.getElementById('statYear'), sd = document.getElementById('statDuration');
+      if (sr) sr.textContent = content.rating || '—';
+      if (sy) sy.textContent = content.year || '—';
+      if (sd) sd.textContent = content.duration || (content.seasons ? content.seasons + ' مواسم' : '—');
+
+      // Re-render episodes with multi-server support
+      if (type === 'series' && content.seasons_data) {
+        const epPanel = document.getElementById('episodesPanel');
+        const seasonSel = document.getElementById('seasonSelector');
+        const epList = document.getElementById('episodesList');
+        if (!epPanel || !seasonSel || !epList) return;
+
+        let currentSeason = 0;
+
+        function loadSeason(idx) {
+          currentSeason = idx;
+          const sd = content.seasons_data[idx];
+          if (!sd) return;
+
+          // Season buttons
+          seasonSel.innerHTML = content.seasons_data.map((s, i) =>
+            `<button class="season-btn ${i===idx?'active':''}" data-s="${i}">الموسم ${s.season}</button>`
+          ).join('');
+          seasonSel.querySelectorAll('.season-btn').forEach(btn => {
+            btn.addEventListener('click', () => loadSeason(+btn.dataset.s));
+          });
+
+          // Episode list
+          epList.innerHTML = sd.episodes.map((ep, i) => `
+            <div class="episode-item ${i===0&&idx===0?'active':''}" data-ep="${i}">
+              <div class="ep-num">${ep.ep}</div>
+              <div class="ep-info">
+                <div class="ep-title">${ep.titleAr || ep.title}</div>
+                <div class="ep-duration">${ep.duration}</div>
               </div>
+            </div>`).join('');
+
+          // Load first episode
+          loadEpisodeWithServers(sd.episodes[0]);
+
+          epList.querySelectorAll('.episode-item').forEach(el => {
+            el.addEventListener('click', () => {
+              epList.querySelectorAll('.episode-item').forEach(e => e.classList.remove('active'));
+              el.classList.add('active');
+              const ep = content.seasons_data[currentSeason].episodes[+el.dataset.ep];
+              loadEpisodeWithServers(ep);
+              document.getElementById('videoWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          });
+        }
+        loadSeason(0);
+      }
+
+      // Related mini cards
+      const relGrid = document.getElementById('relatedGrid');
+      if (relGrid) {
+        const related = ALL.filter(i => i.id !== id && i.type === type).slice(0, 8);
+        relGrid.innerHTML = related.map(item => `
+          <div class="mini-card" onclick="location.href='player.html?id=${item.id}&type=${item.type}'">
+            <img src="${item.poster}" alt="${item.titleAr||item.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'85\'%3E%3Crect fill=\'%2312121f\' width=\'60\' height=\'85\'/%3E%3C/svg%3E'">
+            <div class="mini-card-info">
+              <div class="mini-card-title">${item.titleAr||item.title}</div>
+              <div class="mini-card-sub"><span>⭐ ${item.rating}</span><span>${item.year}</span></div>
             </div>
             <div class="mini-card-play">▶</div>
-          </div>`
-        ).join('');
-
-        // Also fill stat grid
-        const content = type === 'movie'
-          ? (STREAMIFY_DATA.movies.find(m => m.id === id) || STREAMIFY_DATA.featured)
-          : STREAMIFY_DATA.series.find(s => s.id === id);
-
-        if (content) {
-          const sr = document.getElementById('statRating');
-          const sy = document.getElementById('statYear');
-          const sd = document.getElementById('statDuration');
-          const pi = document.getElementById('posterImg');
-
-          if (sr) sr.textContent = content.rating || '—';
-          if (sy) sy.textContent = content.year || '—';
-          if (sd) sd.textContent = content.duration || (content.seasons ? content.seasons : '—');
-          if (pi) { pi.src = content.poster; pi.alt = content.title; }
-        }
-
-      }, 200);
-    });
+          </div>`).join('');
+      }
+    }, 250);
+  });
   </script>
 </body>
 </html>
