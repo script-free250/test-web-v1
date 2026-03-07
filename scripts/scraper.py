@@ -222,7 +222,7 @@ async def get_series_details(page, info):
     sep("بحث عن روابط الحلقات")
 
     ep_selectors = [
-        ('a[href*="video.php"]',    'video.php'),
+        ('a[href*="play.php"]',    'play.php'),
         ('a[href*="watch"]',        'watch'),
         ('a[href*="episode"]',      'episode'),
         ('a[href*="حلقة"]',        'حلقة'),
