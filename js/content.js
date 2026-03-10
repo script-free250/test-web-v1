@@ -7,7 +7,7 @@ const STREAMIFY_DATA = {
     description:"", descriptionAr:"", type:"series",
     genre:["دراما","رمضان 2026"], year:2026, rating:"7.5", seasons:1,
     poster:"", backdrop:"",
-    videoUrl:"https://larozza.sbs/video.php?vid=bf84e3fd2", trailerUrl:"https://larozza.sbs/video.php?vid=bf84e3fd2"
+    videoUrl:"https://larozza.wiki/video.php?vid=1bda15b1a", trailerUrl:"https://larozza.wiki/video.php?vid=1bda15b1a"
   },
   movies:[],
   series:[
@@ -19,7 +19,7 @@ const STREAMIFY_DATA = {
       seasons_data:[
         {
           season:1, episodes:[
-            {ep:1,title:"الحلقة 1",titleAr:"الحلقة 1",duration:"—",videoUrl:"https://larozza.sbs/video.php?vid=bf84e3fd2",servers:[{"label": "og:video", "url": "https://larozza.sbs/video.php?vid=bf84e3fd2"}]},
+            {ep:1,title:"الحلقة 1",titleAr:"الحلقة 1",duration:"—",videoUrl:"https://larozza.wiki/video.php?vid=1bda15b1a",servers:[{"label": "og:video", "url": "https://larozza.wiki/video.php?vid=1bda15b1a"}]},
           ]
         },
       ]
