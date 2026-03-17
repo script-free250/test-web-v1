@@ -3,23 +3,23 @@
  */
 const STREAMIFY_DATA = {
   featured: {
-    id:"featured-1", title:"", titleAr:"",
+    id:"featured-1", title:"علي كلاي", titleAr:"علي كلاي",
     description:"", descriptionAr:"", type:"series",
     genre:["دراما","رمضان 2026"], year:2026, rating:"7.5", seasons:1,
     poster:"", backdrop:"",
-    videoUrl:"https://laroza.boats/video.php?vid=e136249ca", trailerUrl:"https://laroza.boats/video.php?vid=e136249ca"
+    videoUrl:"https://larozza.ink/video.php?vid=6a4f75611", trailerUrl:"https://larozza.ink/video.php?vid=6a4f75611"
   },
   movies:[],
   series:[
     {
-      id:"series-1", title:"", titleAr:"",
+      id:"series-1", title:"علي كلاي", titleAr:"علي كلاي",
       description:"", descriptionAr:"",
       genre:["دراما","رمضان 2026"], year:2026, rating:"7.5",
       seasons:1, episodes:1, poster:"", backdrop:"",
       seasons_data:[
         {
           season:1, episodes:[
-            {ep:1,title:"الحلقة 1",titleAr:"الحلقة 1",duration:"—",videoUrl:"https://laroza.boats/video.php?vid=e136249ca",servers:[{"label": "og:video", "url": "https://laroza.boats/video.php?vid=e136249ca"}]},
+            {ep:1,title:"الحلقة 1",titleAr:"الحلقة 1",duration:"—",videoUrl:"https://larozza.ink/video.php?vid=6a4f75611",servers:[{"label": "og:video", "url": "https://larozza.ink/video.php?vid=6a4f75611"}]},
           ]
         },
       ]
